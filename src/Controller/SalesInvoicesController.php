@@ -115,8 +115,12 @@ class SalesInvoicesController extends AppController
 		}
 
 		//FETCH SALES LEDGERS END//
+		
+		$cgstLedgers=$this->SalesInvoices->SalesInvoiceRows->CgstLedgers->find()
+						->where(['CgstLedgers.tax_type'=>'CGST', 'CgstLedgers.input_output'=>'output']);
 		$items = $this->SalesInvoices->SalesInvoiceRows->Items->find('list');
-        $this->set(compact('salesInvoice', 'partyLedgers', 'salesLedgers', 'items'));
+		pr($cgstLedgers->toArray()); exit;
+        $this->set(compact('salesInvoice', 'partyLedgers', 'salesLedgers', 'items', 'cgstLedgers'));
         $this->set('_serialize', ['salesInvoice']);
     }
 
