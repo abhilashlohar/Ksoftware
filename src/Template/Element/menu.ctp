@@ -89,6 +89,20 @@ echo '<li>'.$this->Html->link($this->Html->tag('i', '', ['class' => 'icon-home']
 		<li><?php echo $this->Html->link($this->Html->tag('i', '', ['class' => 'fa fa-list-ul']).' List', '/sales-invoices',['escape' => false]); ?></li>
 	</ul>
 </li>
+
+<li class="start ">
+	<a href="javascript:;">
+	<i class="fa fa-sitemap"></i>
+	<span class="title">Purchases Invoice</span>
+	<span class="arrow "></span>
+	</a>
+	<ul class="sub-menu">
+		<li><?php echo $this->Html->link($this->Html->tag('i', '', ['class' => 'fa fa-plus-square']).' Create', '/PurchaseInvoices/Add',['escape' => false]); ?></li>
+		<li><?php echo $this->Html->link($this->Html->tag('i', '', ['class' => 'fa fa-list-ul']).' List', '/PurchaseInvoices',['escape' => false]); ?></li>
+	</ul>
+</li>
+
+
 <?php 
 echo '<li>'.$this->Html->link($this->Html->tag('i', '', ['class' => 'icon-lock']).'Logout', '/Users/logout',['escape' => false]).'</li>';
 ?>

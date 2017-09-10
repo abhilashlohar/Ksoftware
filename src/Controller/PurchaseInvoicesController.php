@@ -53,9 +53,22 @@ class PurchaseInvoicesController extends AppController
      */
     public function add()
     {
+		$company_id=$this->Auth->User('company')->id;
+		$this->viewBuilder()->layout('index_layout');
+        
         $purchaseInvoice = $this->PurchaseInvoices->newEntity();
         if ($this->request->is('post')) {
             $purchaseInvoice = $this->PurchaseInvoices->patchEntity($purchaseInvoice, $this->request->getData());
+			
+			$Voucher_no = $this->PurchaseInvoices->find()->select(['voucher_no'])->where(['PurchaseInvoices.company_id'=>$company_id])->order(['PurchaseInvoices.voucher_no' => 'DESC'])->first();
+			if($Voucher_no){
+				$voucher_no=$Voucher_no->voucher_no+1;
+			}else{
+				$voucher_no=1;
+			}
+			$purchaseInvoice->voucher_no=$voucher_no;			
+			
+			
             if ($this->PurchaseInvoices->save($purchaseInvoice)) {
                 $this->Flash->success(__('The purchase invoice has been saved.'));
 
@@ -63,10 +76,51 @@ class PurchaseInvoicesController extends AppController
             }
             $this->Flash->error(__('The purchase invoice could not be saved. Please, try again.'));
         }
-        $partyLedgers = $this->PurchaseInvoices->PartyLedgers->find('list', ['limit' => 200]);
-        $purchaseLedgers = $this->PurchaseInvoices->PurchaseLedgers->find('list', ['limit' => 200]);
-        $companies = $this->PurchaseInvoices->Companies->find('list', ['limit' => 200]);
-        $this->set(compact('purchaseInvoice', 'partyLedgers', 'purchaseLedgers', 'companies'));
+		
+		//FETCH PARTY LEDGERS START//
+		$partyParentGroups = $this->PurchaseInvoices->PartyLedgers->AccountingGroups->find()
+						->where(['AccountingGroups.company_id'=>$company_id, 'AccountingGroups.purchase_invoice_party'=>1]);
+		
+		$partyGroups=[]; $partyLedgers = [];
+		foreach($partyParentGroups as $partyParentGroup)
+		{
+			$partyChildGroups = $this->PurchaseInvoices->PartyLedgers->AccountingGroups->find('children', ['for' => $partyParentGroup->id])->toArray();
+			$partyGroups[]=$partyParentGroup->id;
+			foreach($partyChildGroups as $partyChildGroup){
+				$partyGroups[]=$partyChildGroup->id;
+			}
+		}
+		if($partyGroups)
+		{
+			$partyLedgers = $this->PurchaseInvoices->PartyLedgers->find('list')
+							->where(['PartyLedgers.accounting_group_id IN' =>$partyGroups,'PartyLedgers.company_id'=>$company_id]);
+		}
+		//FETCH PARTY LEDGERS END//				
+		//FETCH Purchase LEDGERS START//
+		$purchaseParentGroups = $this->PurchaseInvoices->PurchaseLedgers->AccountingGroups->find()
+						->where(['AccountingGroups.company_id'=>$company_id, 'AccountingGroups.	purchase_invoice_purchase_acc'=>1]);
+		
+		$purchaseGroups=[]; $purchaseLedgers = [];
+		foreach($purchaseParentGroups as $purchaseParentGroup)
+		{
+			$purchaseChildGroups = $this->PurchaseInvoices->PurchaseLedgers->AccountingGroups->find('children', ['for' => $purchaseParentGroup->id])->toArray();
+			$purchaseGroups[]=$purchaseParentGroup->id;
+			foreach($purchaseChildGroups as $purchaseChildGroup){
+				$purchaseGroups[]=$purchaseChildGroup->id;
+			}
+		}
+		if($purchaseGroups)
+		{
+			$purchaseLedgers = $this->PurchaseInvoices->PurchaseLedgers->find('list')
+							->where(['PurchasesLedgers.accounting_group_id IN' =>$purchaseGroups,'PurchaseLedgers.company_id'=>$company_id]);			
+		}
+
+		//FETCH SALES LEDGERS END//
+
+		
+		$items = $this->PurchaseInvoices->PurchaseInvoiceRows->Items->find('list');
+        $companies = $this->PurchaseInvoices->Companies->find('list');
+        $this->set(compact('purchaseInvoice', 'partyLedgers', 'purchaseLedgers', 'companies', 'items'));
         $this->set('_serialize', ['purchaseInvoice']);
     }
 

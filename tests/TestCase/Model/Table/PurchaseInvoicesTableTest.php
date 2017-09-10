@@ -26,18 +26,21 @@ class PurchaseInvoicesTableTest extends TestCase
     public $fixtures = [
         'app.purchase_invoices',
         'app.party_ledgers',
-        'app.purchase_ledgers',
+        'app.accounting_groups',
+        'app.nature_of_groups',
         'app.companies',
         'app.states',
         'app.users',
-        'app.accounting_groups',
-        'app.nature_of_groups',
+        'app.financial_years',
         'app.ledgers',
         'app.accounting_entries',
         'app.customers',
         'app.suppliers',
-        'app.financial_years',
-        'app.purchase_invoice_rows'
+        'app.purchase_ledgers',
+        'app.purchase_invoice_rows',
+        'app.items',
+        'app.units',
+        'app.stock_groups'
     ];
 
     /**

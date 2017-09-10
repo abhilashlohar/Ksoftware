@@ -15,8 +15,8 @@ use Cake\ORM\Entity;
  * @property string $purchase_type
  * @property int $company_id
  *
- * @property \App\Model\Entity\PartyLedger $party_ledger
- * @property \App\Model\Entity\PurchaseLedger $purchase_ledger
+ * @property \App\Model\Entity\Ledger $PartyLedgers
+ * @property \App\Model\Entity\Ledger $PurchaseLedgers
  * @property \App\Model\Entity\Company $company
  * @property \App\Model\Entity\PurchaseInvoiceRow[] $purchase_invoice_rows
  */

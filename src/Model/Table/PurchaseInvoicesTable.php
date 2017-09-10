@@ -9,10 +9,10 @@ use Cake\Validation\Validator;
 /**
  * PurchaseInvoices Model
  *
- * @property \App\Model\Table\PartyLedgersTable|\Cake\ORM\Association\BelongsTo $PartyLedgers
- * @property \App\Model\Table\PurchaseLedgersTable|\Cake\ORM\Association\BelongsTo $PurchaseLedgers
+ * @property \App\Model\Table\LedgersTable|\Cake\ORM\Association\BelongsTo $PartyLedgers
+ * @property \App\Model\Table\LedgersTable|\Cake\ORM\Association\BelongsTo $PurchaseLedgers
  * @property \App\Model\Table\CompaniesTable|\Cake\ORM\Association\BelongsTo $Companies
- * @property \App\Model\Table\PurchaseInvoiceRowsTable|\Cake\ORM\Association\HasMany $PurchaseInvoiceRows
+ * @property |\Cake\ORM\Association\HasMany $PurchaseInvoiceRows
  *
  * @method \App\Model\Entity\PurchaseInvoice get($primaryKey, $options = [])
  * @method \App\Model\Entity\PurchaseInvoice newEntity($data = null, array $options = [])
@@ -39,14 +39,18 @@ class PurchaseInvoicesTable extends Table
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
 
-        $this->belongsTo('PartyLedgers', [
-            'foreignKey' => 'party_ledger_id',
-            'joinType' => 'INNER'
-        ]);
-        $this->belongsTo('PurchaseLedgers', [
-            'foreignKey' => 'purchase_ledger_id',
-            'joinType' => 'INNER'
-        ]);
+		$this->belongsTo('PartyLedgers', [
+			'className' => 'Ledgers',
+			'foreignKey' => 'party_ledger_id',
+			'propertyName' => 'PartyLedgers',
+		]);
+		
+		$this->belongsTo('PurchaseLedgers', [
+			'className' => 'Ledgers',
+			'foreignKey' => 'purchase_ledger_id',
+			'propertyName' => 'PurchaseLedgers',
+		]);
+		
         $this->belongsTo('Companies', [
             'foreignKey' => 'company_id',
             'joinType' => 'INNER'
