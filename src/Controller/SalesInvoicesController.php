@@ -117,10 +117,15 @@ class SalesInvoicesController extends AppController
 		//FETCH SALES LEDGERS END//
 		
 		$cgstLedgers=$this->SalesInvoices->SalesInvoiceRows->CgstLedgers->find()
-						->where(['CgstLedgers.tax_type'=>'CGST', 'CgstLedgers.input_output'=>'output']);
+						->where(['CgstLedgers.tax_type'=>'CGST', 'CgstLedgers.input_output'=>'output'])
+						->order(['CgstLedgers.percentage_of_calculation'=>'ASC']);
+		$cgstLedgerOptions=[];
+		foreach($cgstLedgers as $cgstLedger){
+			$cgstLedgerOptions[]=['text'=>$cgstLedger->percentage_of_calculation.'%', 'value'=>$cgstLedger->id, 'percentage_of_calculation'=>$cgstLedger->percentage_of_calculation];
+		}
 		$items = $this->SalesInvoices->SalesInvoiceRows->Items->find('list');
-		pr($cgstLedgers->toArray()); exit;
-        $this->set(compact('salesInvoice', 'partyLedgers', 'salesLedgers', 'items', 'cgstLedgers'));
+		
+        $this->set(compact('salesInvoice', 'partyLedgers', 'salesLedgers', 'items', 'cgstLedgerOptions'));
         $this->set('_serialize', ['salesInvoice']);
     }
 

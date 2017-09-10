@@ -179,7 +179,7 @@ $this->set('title', 'Create Sales Invoice | kounty');
 				<?php echo $this->Form->control('taxable_value',['class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:70px;']); ?>
 			</td>
 			<td style="border: 1px solid  #000;">
-				<?php echo $this->Form->control('cgst_percentage',['class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:40px;']); ?>
+				<?php echo $this->Form->control('cgst_ledger_id',['options'=>$cgstLedgerOptions, 'class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:60px;']); ?>
 			</td>
 			<td style="border: 1px solid  #000;">
 				<?php echo $this->Form->control('cgst_amount',['class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:60px;']); ?>
