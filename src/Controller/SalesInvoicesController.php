@@ -78,7 +78,7 @@ class SalesInvoicesController extends AppController
 		$partyParentGroups = $this->SalesInvoices->PartyLedgers->AccountingGroups->find()
 						->where(['AccountingGroups.company_id'=>$company_id, 'AccountingGroups.sale_invoice_party'=>1]);
 		
-		$partyGroups=[]; 
+		$partyGroups=[]; $partyLedgers = [];
 		foreach($partyParentGroups as $partyParentGroup)
 		{
 			$partyChildGroups = $this->SalesInvoices->PartyLedgers->AccountingGroups->find('children', ['for' => $partyParentGroup->id])->toArray();
@@ -87,8 +87,11 @@ class SalesInvoicesController extends AppController
 				$partyGroups[]=$partyChildGroup->id;
 			}
 		}
-		$partyLedgers = $this->SalesInvoices->PartyLedgers->find('list')
+		if($partyGroups)
+		{
+			$partyLedgers = $this->SalesInvoices->PartyLedgers->find('list')
 							->where(['PartyLedgers.accounting_group_id IN' =>$partyGroups,'PartyLedgers.company_id'=>$company_id]);
+		}
 		//FETCH PARTY LEDGERS END//
 		
 		
@@ -96,7 +99,7 @@ class SalesInvoicesController extends AppController
 		$salesParentGroups = $this->SalesInvoices->SalesLedgers->AccountingGroups->find()
 						->where(['AccountingGroups.company_id'=>$company_id, 'AccountingGroups.sale_invoice_sales_acc'=>1]);
 		
-		$salesGroups=[];
+		$salesGroups=[]; $salesLedgers = [];
 		foreach($salesParentGroups as $salesParentGroup)
 		{
 			$salesChildGroups = $this->SalesInvoices->SalesLedgers->AccountingGroups->find('children', ['for' => $salesParentGroup->id])->toArray();
@@ -105,8 +108,12 @@ class SalesInvoicesController extends AppController
 				$salesGroups[]=$salesChildGroup->id;
 			}
 		}
-		$salesLedgers = $this->SalesInvoices->SalesLedgers->find('list')
-							->where(['SalesLedgers.accounting_group_id IN' =>$salesGroups,'SalesLedgers.company_id'=>$company_id]);
+		if($salesGroups)
+		{
+			$salesLedgers = $this->SalesInvoices->SalesLedgers->find('list')
+							->where(['SalesLedgers.accounting_group_id IN' =>$salesGroups,'SalesLedgers.company_id'=>$company_id]);			
+		}
+
 		//FETCH SALES LEDGERS END//
 		$items = $this->SalesInvoices->SalesInvoiceRows->Items->find('list');
         $this->set(compact('salesInvoice', 'partyLedgers', 'salesLedgers', 'items'));
