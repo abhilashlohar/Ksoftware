@@ -45,6 +45,24 @@ class PurchaseInvoiceRowsTable extends Table
             'foreignKey' => 'item_id',
             'joinType' => 'INNER'
         ]);
+		
+		$this->belongsTo('CgstLedgers', [
+			'className' => 'Ledgers',
+			'foreignKey' => 'cgst_ledger_id',
+			'propertyName' => 'CgstLedgers',
+		]);
+		$this->belongsTo('SgstLedgers', [
+			'className' => 'Ledgers',
+			'foreignKey' => 'sgst_ledger_id',
+			'propertyName' => 'SgstLedgers',
+		]);
+		$this->belongsTo('IgstLedgers', [
+			'className' => 'Ledgers',
+			'foreignKey' => 'igst_ledger_id',
+			'propertyName' => 'IgstLedgers',
+		]);		
+		
+		
     }
 
     /**
