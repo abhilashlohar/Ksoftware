@@ -5,6 +5,8 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Event\Event;
+use ArrayObject;
 
 /**
  * PurchaseInvoices Model
@@ -59,6 +61,11 @@ class PurchaseInvoicesTable extends Table
             'foreignKey' => 'purchase_invoice_id'
         ]);
     }
+	
+	public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options)
+	{
+		$data['transaction_date'] = date('Y-m-d',strtotime($data['transaction_date']));
+	}
 
     /**
      * Default validation rules.

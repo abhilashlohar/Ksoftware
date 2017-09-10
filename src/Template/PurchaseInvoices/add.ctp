@@ -3,8 +3,6 @@
  * @Author: Kounty
  */
 $this->set('title', 'Create Purchase Invoice | kounty');
-
-
 ?>
 <style>
 .mainTable thead th{
@@ -49,7 +47,7 @@ $this->set('title', 'Create Purchase Invoice | kounty');
 				<div class="form-group">
 					<label>Purchase Type</label>
 					<?php 
-					$purchase_types = ['Cash'=>'Cash','Credit'=>'Credit',];
+					$purchase_types= ['Cash'=>'Cash','Credit'=>'Credit',];
 					echo $this->Form->input('purchase_type', ['options'=>$purchase_types,'label' => false,'class' => 'form-control input-sm','value'=>'Credit']); 
 					?>
 				</div>
@@ -63,7 +61,7 @@ $this->set('title', 'Create Purchase Invoice | kounty');
 			<div class="col-md-3">
 				<div class="form-group">
 					<label>Purchase Ledger</label>
-					<?php echo $this->Form->control('sale_ledger_id',['options'=>$partyLedgers,'class'=>'form-control input-sm select2me','label'=>false]); ?>
+					<?php echo $this->Form->control('purchase_ledger_id',['options'=>$purchaseLedgers,'class'=>'form-control input-sm select2me','label'=>false]); ?>
 				</div>
 			</div>
 		</div>
@@ -82,11 +80,14 @@ $this->set('title', 'Create Purchase Invoice | kounty');
 								<th rowspan="2">Taxable Value</th>
 								<th colspan="2" style="border: 1px solid  #000;">CGST</th>
 								<th colspan="2" style="border: 1px solid  #000;">SGST</th>
+								<th colspan="2" style="border: 1px solid  #000;">IGST</th>
 								<th rowspan="2">Total</th>
 								<th rowspan="2"></th>
 							</tr>
 							<tr>
 								<th style="text-align: center;border: 1px solid  #000;" >%</th>
+								<th style="text-align: center;border: 1px solid  #000;">Amt</th>
+								<th style="text-align: center;border: 1px solid  #000;">%</</th>
 								<th style="text-align: center;border: 1px solid  #000;">Amt</th>
 								<th style="text-align: center;border: 1px solid  #000;">%</</th>
 								<th style="text-align: center;border: 1px solid  #000;">Amt</th>
@@ -125,6 +126,11 @@ $this->set('title', 'Create Purchase Invoice | kounty');
 								</td>
 								<td style="border: 1px solid  #000;">
 									<?php echo $this->Form->control('total_cgst_amount',['class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:60px;']); ?>
+								</td>
+								<td style="border: 1px solid  #000;">
+								</td>
+								<td style="border: 1px solid  #000;">
+									<?php echo $this->Form->control('total_sgst_amount',['class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:60px;']); ?>
 								</td>
 								<td style="border: 1px solid  #000;">
 								</td>
@@ -179,13 +185,19 @@ $this->set('title', 'Create Purchase Invoice | kounty');
 				<?php echo $this->Form->control('taxable_value',['class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:70px;']); ?>
 			</td>
 			<td style="border: 1px solid  #000;">
-				<?php echo $this->Form->control('cgst_percentage',['class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:40px;']); ?>
+				<?php echo $this->Form->control('cgst_ledger_id',['options'=>$cgstLedgerOptions, 'class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:60px;']); ?>
 			</td>
 			<td style="border: 1px solid  #000;">
 				<?php echo $this->Form->control('cgst_amount',['class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:60px;']); ?>
 			</td>
 			<td style="border: 1px solid  #000;">
-				<?php echo $this->Form->control('sgst_percentage',['class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:40px;']); ?>
+				<?php echo $this->Form->control('sgst_percentage',['options'=>$sgstLedgerOptions, 'class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:60px;']); ?>
+			</td>
+			<td style="border: 1px solid  #000;">
+				<?php echo $this->Form->control('igst_amount',['class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:60px;']); ?>
+			</td>
+			<td style="border: 1px solid  #000;">
+				<?php echo $this->Form->control('igst_percentage',['options'=>$igstLedgerOptions, 'class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:60px;']); ?>
 			</td>
 			<td style="border: 1px solid  #000;">
 				<?php echo $this->Form->control('sgst_amount',['class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:60px;']); ?>
@@ -277,11 +289,20 @@ $this->set('title', 'Create Purchase Invoice | kounty');
 				$(this).find('td:nth-child(7) input').attr({name:'purchase_invoice_rows['+i+'][pnf_percentage]', id:'purchase_invoice_rows-'+i+'-pnf_percentage'});
 				$(this).find('td:nth-child(8) input').attr({name:'purchase_invoice_rows['+i+'][pnf_amount]', id:'purchase_invoice_rows-'+i+'-pnf_amount'});
 				$(this).find('td:nth-child(9) input').attr({name:'purchase_invoice_rows['+i+'][taxable_value]', id:'purchase_invoice_rows-'+i+'-taxable_value'});
-				$(this).find('td:nth-child(10) input').attr({name:'purchase_invoice_rows['+i+'][cgst_percentage]', id:'purchase_invoice_rows-'+i+'-cgst_percentage'});
+								
+				$(this).find('td:nth-child(10) select').attr({name:'purchase_invoice_rows['+i+'][cgst_ledger_id]', id:'purchase_invoice_rows-'+i+'-cgst_ledger_id'});
+				
 				$(this).find('td:nth-child(11) input').attr({name:'purchase_invoice_rows['+i+'][cgst_amount]', id:'purchase_invoice_rows-'+i+'-cgst_amount'});
-				$(this).find('td:nth-child(12) input').attr({name:'purchase_invoice_rows['+i+'][sgst_percentage]', id:'purchase_invoice_rows-'+i+'-sgst_percentage'});
+				
+				$(this).find('td:nth-child(12) select').attr({name:'purchase_invoice_rows['+i+'][sgst_ledger_id]', id:'purchase_invoice_rows-'+i+'-sgst_ledger_id'});
+				
 				$(this).find('td:nth-child(13) input').attr({name:'purchase_invoice_rows['+i+'][sgst_amount]', id:'purchase_invoice_rows-'+i+'-sgst_amount'});
-				$(this).find('td:nth-child(14) input').attr({name:'purchase_invoice_rows['+i+'][total]', id:'purchase_invoice_rows-'+i+'-total'});
+
+				$(this).find('td:nth-child(14) select').attr({name:'purchase_invoice_rows['+i+'][igst_ledger_id]', id:'purchase_invoice_rows-'+i+'-igst_ledger_id'});
+				
+				$(this).find('td:nth-child(15) input').attr({name:'purchase_invoice_rows['+i+'][igst_amount]', id:'purchase_invoice_rows-'+i+'-igst_amount'});				
+				
+				$(this).find('td:nth-child(16) input').attr({name:'purchase_invoice_rows['+i+'][total]', id:'purchase_invoice_rows-'+i+'-total'});
 				i++;
 			});
 		}
@@ -303,6 +324,8 @@ $this->set('title', 'Create Purchase Invoice | kounty');
 			amount=amount.toFixed(2);
 			tr.find('td:nth-child(4) input').val(amount);
 		}
+		
+	
 	
 		ComponentsPickers.init();
     });

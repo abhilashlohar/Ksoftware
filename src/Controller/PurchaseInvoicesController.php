@@ -54,6 +54,7 @@ class PurchaseInvoicesController extends AppController
     public function add()
     {
 		$company_id=$this->Auth->User('company')->id;
+		$company_state_id=$this->Auth->User('company')->state_id;
 		$this->viewBuilder()->layout('index_layout');
         
         $purchaseInvoice = $this->PurchaseInvoices->newEntity();
@@ -67,7 +68,8 @@ class PurchaseInvoicesController extends AppController
 				$voucher_no=1;
 			}
 			$purchaseInvoice->voucher_no=$voucher_no;			
-			
+			$purchaseInvoice->company_id= $company_id;
+			pr($purchaseInvoice); exit;
 			
             if ($this->PurchaseInvoices->save($purchaseInvoice)) {
                 $this->Flash->success(__('The purchase invoice has been saved.'));
@@ -80,7 +82,6 @@ class PurchaseInvoicesController extends AppController
 		//FETCH PARTY LEDGERS START//
 		$partyParentGroups = $this->PurchaseInvoices->PartyLedgers->AccountingGroups->find()
 						->where(['AccountingGroups.company_id'=>$company_id, 'AccountingGroups.purchase_invoice_party'=>1]);
-		
 		$partyGroups=[]; $partyLedgers = [];
 		foreach($partyParentGroups as $partyParentGroup)
 		{
@@ -112,15 +113,40 @@ class PurchaseInvoicesController extends AppController
 		if($purchaseGroups)
 		{
 			$purchaseLedgers = $this->PurchaseInvoices->PurchaseLedgers->find('list')
-							->where(['PurchasesLedgers.accounting_group_id IN' =>$purchaseGroups,'PurchaseLedgers.company_id'=>$company_id]);			
+							->where(['PurchaseLedgers.accounting_group_id IN' =>$purchaseGroups,'PurchaseLedgers.company_id'=>$company_id]);			
 		}
 
 		//FETCH SALES LEDGERS END//
-
+		
+		$cgstLedgers=$this->PurchaseInvoices->PurchaseInvoiceRows->CgstLedgers->find()
+						->where(['CgstLedgers.tax_type'=>'CGST', 'CgstLedgers.input_output'=>'input'])
+						->order(['CgstLedgers.percentage_of_calculation'=>'ASC']);
+		$cgstLedgerOptions=[];
+		foreach($cgstLedgers as $cgstLedger){
+			$cgstLedgerOptions[]=['text'=>$cgstLedger->percentage_of_calculation.'%', 'value'=>$cgstLedger->id, 'percentage_of_calculation'=>$cgstLedger->percentage_of_calculation];
+		}
+		
+		$sgstLedgers=$this->PurchaseInvoices->PurchaseInvoiceRows->SgstLedgers->find()
+						->where(['SgstLedgers.tax_type'=>'SGST', 'SgstLedgers.input_output'=>'input'])
+						->order(['SgstLedgers.percentage_of_calculation'=>'ASC']);
+		$sgstLedgerOptions=[];
+		foreach($sgstLedgers as $sgstLedger){
+			$sgstLedgerOptions[]=['text'=>$sgstLedger->percentage_of_calculation.'%', 'value'=>$sgstLedger->id, 'percentage_of_calculation'=>$sgstLedger->percentage_of_calculation];
+		}
+		
+		$igstLedgers=$this->PurchaseInvoices->PurchaseInvoiceRows->IgstLedgers->find()
+						->where(['IgstLedgers.tax_type'=>'CGST', 'IgstLedgers.input_output'=>'input'])
+						->order(['IgstLedgers.percentage_of_calculation'=>'ASC']);
+		$igstLedgerOptions=[];
+		foreach($igstLedgers as $igstLedger){
+			$igstLedgerOptions[]=['text'=>$igstLedger->percentage_of_calculation.'%', 'value'=>$igstLedger->id, 'percentage_of_calculation'=>$igstLedger->percentage_of_calculation];
+		}		
+		
+		
 		
 		$items = $this->PurchaseInvoices->PurchaseInvoiceRows->Items->find('list');
         $companies = $this->PurchaseInvoices->Companies->find('list');
-        $this->set(compact('purchaseInvoice', 'partyLedgers', 'purchaseLedgers', 'companies', 'items'));
+        $this->set(compact('purchaseInvoice','partyLedgers','purchaseLedgers','companies','items' ,'cgstLedgerOptions','sgstLedgerOptions','igstLedgerOptions','company_state_id'));
         $this->set('_serialize', ['purchaseInvoice']);
     }
 
