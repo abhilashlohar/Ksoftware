@@ -82,11 +82,14 @@ $this->set('title', 'Create Sales Invoice | kounty');
 								<th rowspan="2">Taxable Value</th>
 								<th colspan="2" style="border: 1px solid  #000;">CGST</th>
 								<th colspan="2" style="border: 1px solid  #000;">SGST</th>
+								<th colspan="2" style="border: 1px solid  #000;">IGST</th>
 								<th rowspan="2">Total</th>
 								<th rowspan="2"></th>
 							</tr>
 							<tr>
 								<th style="text-align: center;border: 1px solid  #000;" >%</th>
+								<th style="text-align: center;border: 1px solid  #000;">Amt</th>
+								<th style="text-align: center;border: 1px solid  #000;">%</</th>
 								<th style="text-align: center;border: 1px solid  #000;">Amt</th>
 								<th style="text-align: center;border: 1px solid  #000;">%</</th>
 								<th style="text-align: center;border: 1px solid  #000;">Amt</th>
@@ -125,6 +128,11 @@ $this->set('title', 'Create Sales Invoice | kounty');
 								</td>
 								<td style="border: 1px solid  #000;">
 									<?php echo $this->Form->control('total_cgst_amount',['class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:60px;']); ?>
+								</td>
+								<td style="border: 1px solid  #000;">
+								</td>
+								<td style="border: 1px solid  #000;">
+									<?php echo $this->Form->control('total_sgst_amount',['class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:60px;']); ?>
 								</td>
 								<td style="border: 1px solid  #000;">
 								</td>
@@ -185,7 +193,13 @@ $this->set('title', 'Create Sales Invoice | kounty');
 				<?php echo $this->Form->control('cgst_amount',['class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:60px;']); ?>
 			</td>
 			<td style="border: 1px solid  #000;">
-				<?php echo $this->Form->control('sgst_percentage',['class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:40px;']); ?>
+				<?php echo $this->Form->control('sgst_percentage',['options'=>$sgstLedgerOptions, 'class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:60px;']); ?>
+			</td>
+			<td style="border: 1px solid  #000;">
+				<?php echo $this->Form->control('igst_amount',['class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:60px;']); ?>
+			</td>
+			<td style="border: 1px solid  #000;">
+				<?php echo $this->Form->control('igst_percentage',['options'=>$igstLedgerOptions, 'class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:60px;']); ?>
 			</td>
 			<td style="border: 1px solid  #000;">
 				<?php echo $this->Form->control('sgst_amount',['class'=>'form-control input-sm noBorder','label'=>false,'style'=>'width:60px;']); ?>

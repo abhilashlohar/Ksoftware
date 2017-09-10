@@ -123,9 +123,25 @@ class SalesInvoicesController extends AppController
 		foreach($cgstLedgers as $cgstLedger){
 			$cgstLedgerOptions[]=['text'=>$cgstLedger->percentage_of_calculation.'%', 'value'=>$cgstLedger->id, 'percentage_of_calculation'=>$cgstLedger->percentage_of_calculation];
 		}
+		
+		$sgstLedgers=$this->SalesInvoices->SalesInvoiceRows->SgstLedgers->find()
+						->where(['SgstLedgers.tax_type'=>'SGST', 'SgstLedgers.input_output'=>'output'])
+						->order(['SgstLedgers.percentage_of_calculation'=>'ASC']);
+		$sgstLedgerOptions=[];
+		foreach($sgstLedgers as $sgstLedger){
+			$sgstLedgerOptions[]=['text'=>$sgstLedger->percentage_of_calculation.'%', 'value'=>$sgstLedger->id, 'percentage_of_calculation'=>$sgstLedger->percentage_of_calculation];
+		}
+		
+		$igstLedgers=$this->SalesInvoices->SalesInvoiceRows->IgstLedgers->find()
+						->where(['IgstLedgers.tax_type'=>'CGST', 'IgstLedgers.input_output'=>'output'])
+						->order(['IgstLedgers.percentage_of_calculation'=>'ASC']);
+		$igstLedgerOptions=[];
+		foreach($igstLedgers as $igstLedger){
+			$igstLedgerOptions[]=['text'=>$igstLedger->percentage_of_calculation.'%', 'value'=>$igstLedger->id, 'percentage_of_calculation'=>$igstLedger->percentage_of_calculation];
+		}
 		$items = $this->SalesInvoices->SalesInvoiceRows->Items->find('list');
 		
-        $this->set(compact('salesInvoice', 'partyLedgers', 'salesLedgers', 'items', 'cgstLedgerOptions'));
+        $this->set(compact('salesInvoice', 'partyLedgers', 'salesLedgers', 'items', 'cgstLedgerOptions', 'sgstLedgerOptions', 'igstLedgerOptions'));
         $this->set('_serialize', ['salesInvoice']);
     }
 
